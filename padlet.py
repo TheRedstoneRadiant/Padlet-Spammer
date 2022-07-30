@@ -55,5 +55,7 @@ Token: {padlet["arvoConfig"]["token"]["oauthToken"]}
     )
 
     while True:
+        print("Delivering payload...")
         r = post_padlet(OAUTH_TOKEN, WALL_ID, USER_ID, payload["subject"], payload["body"])
         r.raise_for_status()
+        print("Delivered payload.")

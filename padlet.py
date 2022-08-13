@@ -1,5 +1,4 @@
-import requests
-import requests, json
+import requests, json, random
 from bs4 import BeautifulSoup
 
 
@@ -7,7 +6,7 @@ BASE_URL = "https://padlet.com/"
 PADLET_LINK = "kzezxhghus/cns0m5vgy7flm1cl"
 
 
-def post_padlet(token, wall_id, author_id, subject, body):
+def post_padlet(token, wall_id, author_id, subject, body, index):
     return requests.post(
         "https://padlet.com/api/5/wishes",
         headers={"Authorization": f"Bearer {token}"},
@@ -21,6 +20,7 @@ def post_padlet(token, wall_id, author_id, subject, body):
             "subject": subject,
             "attachment": "",
             "attachment_caption": None,
+            "sort_index": index,
         },
     )
 
@@ -42,6 +42,11 @@ if __name__ == "__main__":
     ).json()
 
     WALL_ID = padlet["wall"]["id"]
+
+    wishes = requests.get(
+        f"https://api.padlet.com/api/5/wishes?wall_id={WALL_ID}"
+    ).json()["data"]
+
     OAUTH_TOKEN = padlet["arvoConfig"]["token"]["oauthToken"]
 
     print(
@@ -54,8 +59,17 @@ Token: {padlet["arvoConfig"]["token"]["oauthToken"]}
     """
     )
 
+    i = 0
     while True:
-        print("Delivering payload...")
-        r = post_padlet(OAUTH_TOKEN, WALL_ID, USER_ID, payload["subject"], payload["body"])
+        print(f"Count: {i}, Delivering payload", end="\r")
+
+        r = post_padlet(
+            OAUTH_TOKEN,
+            WALL_ID,
+            USER_ID,
+            payload["subject"],
+            payload["body"],
+            random.choice(wishes)["attributes"]["sort_index"],
+        )
         r.raise_for_status()
-        print("Delivered payload.")
+        i += 1

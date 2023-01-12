@@ -2,9 +2,9 @@ import requests, json, random
 from bs4 import BeautifulSoup
 
 
-BASE_URL = "https://padlet.com/"
-PADLET_LINK = "kzezxhghus/cns0m5vgy7flm1cl"
-ATTACHMENTS = []
+BASE_URL: str = "https://padlet.com/"
+PADLET_LINK: str = "kzezxhghus/cns0m5vgy7flm1cl"
+ATTACHMENTS: list[str] = []
 
 
 def post_padlet(token, wall_id, author_id, subject, body, index):

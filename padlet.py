@@ -4,24 +4,30 @@ from bs4 import BeautifulSoup
 
 BASE_URL = "https://padlet.com/"
 PADLET_LINK = "kzezxhghus/cns0m5vgy7flm1cl"
+ATTACHMENTS = []
 
 
 def post_padlet(token, wall_id, author_id, subject, body, index):
+    payload = {
+        "cid": "c_new4",
+        "wall_id": wall_id,
+        "published": True,
+        "author_id": author_id,
+        "width": 200,
+        "body": body,
+        "subject": subject,
+        "attachment": "",
+        "attachment_caption": None,
+        "sort_index": index,
+    }
+
+    if ATTACHMENTS:
+        payload["attachment"] = random.choice(ATTACHMENTS)
+
     return requests.post(
         "https://padlet.com/api/5/wishes",
         headers={"Authorization": f"Bearer {token}"},
-        json={
-            "cid": "c_new4",
-            "wall_id": wall_id,
-            "published": True,
-            "author_id": author_id,
-            "width": 200,
-            "body": body,
-            "subject": subject,
-            "attachment": "",
-            "attachment_caption": None,
-            "sort_index": index,
-        },
+        json=payload,
     )
 
 
@@ -53,7 +59,6 @@ if __name__ == "__main__":
         f"""
 "{padlet["wall"]["headline"]}" ({padlet["wall"]["id"]})
 {padlet["wall"]["namespace"]} - {padlet["wall"]["name"]}
-
 Logged in as: {user["userRegistration"]} ({user["userId"]})
 Token: {padlet["arvoConfig"]["token"]["oauthToken"]}
     """
